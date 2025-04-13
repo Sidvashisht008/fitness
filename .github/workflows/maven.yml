@@ -5,15 +5,26 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
+      # Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up Java (Adjust the version if needed)
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build and Test with Maven
-        run: mvn clean install
+      # Set up Maven
+      - name: Set up Maven
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'maven'
+          maven-version: '3.8.1'
+
+      # Build and test with Maven using H2 DB (Skip PostgreSQL)
+      - name: Run tests with H2
+        run: mvn clean test -Dspring.profiles.active=test
