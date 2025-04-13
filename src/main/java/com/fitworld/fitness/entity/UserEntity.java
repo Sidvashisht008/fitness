@@ -3,6 +3,7 @@ package com.fitworld.fitness.entity;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -114,7 +115,11 @@ public class UserEntity {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "UserEntity [id=" + id + ", name=" + name + ", sex=" + sex + ", age=" + age + ", weight=" + weight
+				+ ", height=" + height + ", phoneNo=" + phoneNo + ", creationTime=" + creationTime + "]";
+	}
 	
 }

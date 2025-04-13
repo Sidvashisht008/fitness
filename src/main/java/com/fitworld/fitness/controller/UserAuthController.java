@@ -7,11 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fitworld.fitness.config.jwt.JwtUtil;
+import com.fitworld.fitness.dto.UserDetailsDto;
 import com.fitworld.fitness.dto.UserLoginDto;
 import com.fitworld.fitness.dto.UserRegistrationDto;
 import com.fitworld.fitness.entity.UserCredentialsEntity;
@@ -65,11 +68,27 @@ public class UserAuthController {
 		if(userCredsOptional.isPresent()) {
 			UserCredentialsEntity userCreds = userCredsOptional.get();
 			if(userCreds.getPassword().equals(userLoginDto.getPassword())) {
-				return ResponseEntity.ok(Map.of("jwt", jwtUtil.generateToken(userLoginDto.getEmailId())+"","Message","User successfully registered"));
+				return ResponseEntity.ok(Map.of("jwt", jwtUtil.generateToken(userLoginDto.getEmailId())+"","Message","User successfully logged in","UserId",userCreds.getUserId()+""));
 			}else {
 				return ResponseEntity.ok(Map.of("Message","Invalid password"));
 			}
 		}
 		return ResponseEntity.ok(Map.of("Message","User not registered or invalid email used"));
+	}
+	
+	@PutMapping("/update-details")
+	public ResponseEntity<?> updateDetails(@RequestBody UserDetailsDto userDetailsDto) {		
+		Optional<UserEntity> userEntityOptional = userEntityRepo.findById(userDetailsDto.getUserId());
+		if(userEntityOptional.isPresent()) {
+			UserEntity userEntity = userEntityOptional.get();
+			userEntity.setAge(userDetailsDto.getAge());
+			userEntity.setHeight(userDetailsDto.getHeight());
+			userEntity.setPhoneNo(userDetailsDto.getPhoneNo());
+			userEntity.setSex(userDetailsDto.getSex());
+			userEntity.setWeight(userDetailsDto.getWeight());
+			return ResponseEntity.ok(Map.of("userDetails",userEntityRepo.save(userEntity).toString(),"Message","User details successfully updated"));
+		}
+		return ResponseEntity.ok(Map.of("Error","User not registered"));
+		
 	}
 }

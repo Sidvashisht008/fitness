@@ -22,7 +22,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		return http.csrf(csrf->csrf.disable())
-				.authorizeHttpRequests(auth->auth.anyRequest().authenticated())
+				.authorizeHttpRequests(auth->auth.requestMatchers("/api/auth/register","/api/auth/login").permitAll().anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults()).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).exceptionHandling(e->e.accessDeniedHandler(new CustomAccessDeniedHandler())).build();
 	}
 }
